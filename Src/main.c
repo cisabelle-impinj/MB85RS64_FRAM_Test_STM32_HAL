@@ -47,7 +47,7 @@
 #define FRAM_NULL    0x00
 
 #define FRAM_NUM_BYTES (8 * 1024) //8KBytes
-#define FRAM_TEST_DATA (((testAddr * 0x51)+0x17)&0xff)
+#define FRAM_TEST_DATA (((testAddr+testDataSeed) * 0x53)&0xff)
 #define FRAM_TEST_ERROR_INSERT 0 //set one bit in the ESHD_FRAM_TEST_ERROR_INSERT byte to intentionally induce write errors
 #define FRAM_TEST_BLOCK_SIZE 512
 #define FRAM_TEST_BLOCK_MASK ((FRAM_NUM_BYTES/FRAM_TEST_BLOCK_SIZE)-1)
@@ -198,7 +198,7 @@ uint8_t FRAM_read(uint16_t address)
     return(byte);
 }
 
-int FRAM_test(uint16_t addrOffset, uint16_t addrRange)
+int FRAM_test(uint16_t addrOffset, uint16_t addrRange, uint16_t testDataSeed)
 {
     uint8_t testData=0;
     uint16_t testAddr=0;
@@ -288,7 +288,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	uint16_t FRAM_testAddr = FRAM_TEST_BLOCK_SIZE * (FRAM_testBlock & FRAM_TEST_BLOCK_MASK);
 	printf("FRAM_test: addr=0x%08x, range=0x%08x\n", FRAM_testAddr, FRAM_TEST_BLOCK_SIZE);
-	FRAM_test(FRAM_testAddr, FRAM_TEST_BLOCK_SIZE);
+	FRAM_test(FRAM_testAddr, FRAM_TEST_BLOCK_SIZE, FRAM_testBlock);
 	++FRAM_testBlock;
   }
   /* USER CODE END 3 */
@@ -509,7 +509,7 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
