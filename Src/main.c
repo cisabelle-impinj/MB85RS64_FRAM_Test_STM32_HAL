@@ -107,23 +107,20 @@ void FRAM_init(void)
 {
 	uint8_t spiCMD;
 
-    //make sure FRAM chip select is disabled - Active low so disable drives GPIO high
-//    FRAM_CS_DISABLE;
-
 	spiCMD = FRAM_RDID;
-//    FRAM_CS_ENABLE;
+    FRAM_CS_ENABLE;
     HAL_SPI_Transmit(&hspi1, &spiCMD, sizeof(spiCMD), HAL_MAX_DELAY);
-//    FRAM_CS_DISABLE;
+    FRAM_CS_DISABLE;
 
     spiCMD = FRAM_WRDI;
-//    FRAM_CS_ENABLE;
+    FRAM_CS_ENABLE;
     HAL_SPI_Transmit(&hspi1, &spiCMD, sizeof(spiCMD), HAL_MAX_DELAY);
-//    FRAM_CS_DISABLE;
+    FRAM_CS_DISABLE;
 
     spiCMD = FRAM_WREN;
-//    FRAM_CS_ENABLE;
+    FRAM_CS_ENABLE;
     HAL_SPI_Transmit(&hspi1, &spiCMD, sizeof(spiCMD), HAL_MAX_DELAY);
-//    FRAM_CS_DISABLE;
+    FRAM_CS_DISABLE;
 
     spiCMD = FRAM_WRSR;
     FRAM_CS_ENABLE;
@@ -243,6 +240,9 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
+  //make sure FRAM chip select is disabled - Active low so disable drives GPIO high
+  FRAM_CS_DISABLE;
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -281,6 +281,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  FRAM_init();
   while (1)
   {
     /* USER CODE END WHILE */
@@ -549,7 +550,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
